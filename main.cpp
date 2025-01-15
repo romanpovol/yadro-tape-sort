@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     if (argc == 4) {
         config_file = argv[3];
     } else {
-        config_file = "config_big_ram.yaml";
+        config_file = "config.yaml";
     }
 
     tape_sorter::sorter::sort(input_file, output_file, config_file);

@@ -1,17 +1,19 @@
 #include "tape.h"
 #include <unistd.h>
 #include <thread>
+#include <utility>
 
 namespace tape {
 
-tape::tape(const std::string &filename, const tape_config::config &config)
+tape::tape(const std::string &filename, tape_config::config config)
     : filestream_(
           filename,
           std::ios_base::in | std::ios_base::out | std::ios::binary
       ),
       filename_(filename),
       offset_(0),
-      config_(config) {
+      actual_size_(-1),
+      config_(std::move(config)) {
 }
 
 tape::~tape() {
@@ -63,7 +65,7 @@ void tape::rewind_tape() {
 }
 
 bool tape::is_end() {
-    return filestream_.peek() == EOF;
+    return filestream_.peek() == EOF || offset_ == actual_size_;
 }
 
 bool tape::is_start() {
@@ -91,6 +93,10 @@ tape tape::create_tmp_tape(const tape_config::config &config) {
 
 std::string tape::get_tape_name() {
     return filename_;
+}
+
+void tape::set_actual_size(std::size_t actual_size) {
+    actual_size_ = actual_size;
 }
 
 }  // namespace tape

@@ -4,7 +4,7 @@
 #include "utils.h"
 
 constexpr char CONFIG_BIG_RAM[] = "../tests/config_big_ram.yaml";
-constexpr char CONFIG_SMALL_RAM[] = "../tests/config_big_ram.yaml";
+constexpr char CONFIG_SMALL_RAM[] = "../tests/config_small_ram.yaml";
 constexpr char INPUT_TAPE[] = "../tests/input";
 constexpr char OUTPUT_TAPE[] = "../tests/output";
 
@@ -26,7 +26,7 @@ TEST_CASE("ram < data") {
 TEST_CASE("big test") {
     for (size_t test = 0; test < 5; test++) {
         auto data = generate_array(10000);
-        check_sort(INPUT_TAPE, OUTPUT_TAPE, CONFIG_SMALL_RAM, data);
+        check_sort(INPUT_TAPE, OUTPUT_TAPE, CONFIG_BIG_RAM, data);
     }
 }
 

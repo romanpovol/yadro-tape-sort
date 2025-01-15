@@ -11,7 +11,7 @@ struct tape {
 public:
     explicit tape(
         const std::string &filename,
-        const tape_config::config &config
+        tape_config::config config
     );
 
     tape(const tape &) = delete;
@@ -37,10 +37,17 @@ public:
 
     std::string get_tape_name();
 
+    /*
+     * When interacting with temporary tapes, the data prefix may be relevant,
+     * so we keep the current data size.
+     */
+    void set_actual_size(std::size_t actual_size);
+
 private:
     std::fstream filestream_;
     std::string filename_;
     std::size_t offset_;
+    std::size_t actual_size_;
     tape_config::config config_;
 };
 

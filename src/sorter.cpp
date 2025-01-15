@@ -3,7 +3,7 @@
 
 namespace tape_sorter {
 
-void read_data_from_tape(
+void sorter::read_data_from_tape(
     const std::vector<std::unique_ptr<tape::tape>> &tmp_tapes,
     const std::unique_ptr<tape::tape> &source_tape,
     std::size_t ram_size
@@ -39,7 +39,51 @@ void read_data_from_tape(
     }
 }
 
-bool merge_tmp_tapes(
+void sorter::read_sorted_blocks(
+    const std::vector<std::unique_ptr<tape::tape>> &tmp_tapes,
+    const std::unique_ptr<tape::tape> &source_tape
+) {
+    if (!source_tape->is_start()) {
+        source_tape->rewind_tape();
+    }
+
+    for (const auto &tape : tmp_tapes) {
+        if (!tape->is_start()) {
+            tape->rewind_tape();
+        }
+    }
+
+    std::vector <std::size_t> tape_sizes(tmp_tapes.size());
+
+    std::size_t current_tmp_tape_number = 0;
+    while (!source_tape->is_end()) {
+        std::int32_t previous_value = source_tape->read();
+        tmp_tapes[current_tmp_tape_number]->write(previous_value);
+        tape_sizes[current_tmp_tape_number]++;
+
+        while (!source_tape->is_end()) {
+            std::int32_t current_value = source_tape->read();
+            if (previous_value > current_value) {
+                source_tape->move_left();
+                break;
+            }
+            previous_value = current_value;
+            tmp_tapes[current_tmp_tape_number]->write(previous_value);
+            tape_sizes[current_tmp_tape_number]++;
+        }
+
+        current_tmp_tape_number =
+            (current_tmp_tape_number + 1 == tmp_tapes.size()
+                 ? 0
+                 : current_tmp_tape_number + 1);
+    }
+
+    for (std::size_t tape_number = 0; tape_number < tape_sizes.size(); tape_number++) {
+        tmp_tapes[tape_number]->set_actual_size(tape_sizes[tape_number]);
+    }
+}
+
+bool sorter::merge_tmp_tapes(
     const std::vector<std::unique_ptr<tape::tape>> &tmp_tapes,
     const std::unique_ptr<tape::tape> &output_tape
 ) {
@@ -55,8 +99,7 @@ bool merge_tmp_tapes(
         }
     }
 
-    std::vector<std::pair<std::int32_t, ValueType>> top_of_tapes(tmp_tapes.size(
-    ));
+    std::vector<std::pair<std::int32_t, ValueType>> top_of_tapes(tmp_tapes.size());
     bool is_data_sorted = true;
     std::int32_t top_of_output_tape = 0;
 
@@ -100,7 +143,7 @@ bool merge_tmp_tapes(
     return is_data_sorted;
 }
 
-void sorter::sorter::sort(
+void sorter::sort(
     const std::string &input_file,
     const std::string &output_file,
     const std::string &config_file,
@@ -130,7 +173,7 @@ void sorter::sorter::sort(
             return;
         }
 
-        read_data_from_tape(tmp_tapes, output_tape, config.ram_size());
+        read_sorted_blocks(tmp_tapes, output_tape);
     }
 }
 
