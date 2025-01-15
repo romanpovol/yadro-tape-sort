@@ -53,14 +53,15 @@ void check_sort(
     const std::string &input_file,
     const std::string &output_file,
     const std::string &config_file,
-    std::vector<std::int32_t> &data
+    std::vector<std::int32_t> &data,
+    std::size_t number_tmp_tapes
 ) {
     clear_tape(input_file);
     clear_tape(output_file);
 
     write_to_tape(input_file, data);
 
-    tape_sorter::sorter::sort(input_file, output_file, config_file);
+    tape_sorter::sorter::sort(input_file, output_file, config_file, number_tmp_tapes);
 
     std::vector<std::int32_t> sorted_data = read_from_tape(output_file);
 

@@ -23,6 +23,13 @@ TEST_CASE("ram < data") {
     check_sort(INPUT_TAPE, OUTPUT_TAPE, CONFIG_SMALL_RAM, data);
 }
 
+TEST_CASE("more tmp tapes") {
+    for (size_t number_tmp_tapes = 3; number_tmp_tapes < 10; number_tmp_tapes++) {
+        auto data = generate_array(1024);
+        check_sort(INPUT_TAPE, OUTPUT_TAPE, CONFIG_SMALL_RAM, data, number_tmp_tapes);
+    }
+}
+
 TEST_CASE("big test") {
     for (size_t test = 0; test < 5; test++) {
         auto data = generate_array(10000);

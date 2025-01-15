@@ -19,7 +19,8 @@ void check_sort(
     const std::string &input_file,
     const std::string &output_file,
     const std::string &config_file,
-    std::vector<std::int32_t> &data
+    std::vector<std::int32_t> &data,
+    std::size_t number_tmp_tapes = 2
 );
 
 #endif  // TAPE_SORT_UTILS_H
